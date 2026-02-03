@@ -1,0 +1,227 @@
+PROJECT :- DATA DIGGER
+
+CREATE DATABASE DATA DIGGER;
+
+1 Customers Table Fields:-
+- CustomerID 
+- Name 
+- Email
+- Address
+
+CREATE TABLE Customers(
+    Customer_Id INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Email VARCHAR(50),	
+    Address VARCHAR(50)  
+    );
+
+
+* Queries to Perform :-
+
+1.1 Insert at least 5 sample customers into the Customers table.
+ANS:-
+
+INSERT INTO Customers  
+VALUES
+(1, 'MEET DOIYA', 'meetdodiya0811@gmail.com', 'Mumbai'),
+(2, 'HEMANSI PATOLIYA', 'hemansipatoliya1410@gmail.com', 'Ahmedabad'),
+(3, 'JATIN SHONKI', 'jatinmatin1112@gmail.com', 'Delhi'),
+(4, 'MEET PARMAR', 'meetparmar0606@gmail.com', 'Hyderabad'),
+(5, 'RAJAT PARMAR', 'rajatparmar2030@gmail.com', 'Pune');
+
+1.2 Retrieve all customer details.
+ANS:-
+
+SELECT * FROM customers; 
+
+1.3 Update a customer's address.
+ANS:-
+
+UPDATE customers SET Address = 'Ahmedabad' WHERE Customer_Id = 1;
+
+1.4 Delete a customer using their CustomerID.
+ANS:-
+
+DELETE FROM customers WHERE Customer_Id = 1;
+
+1.5 Display all customers whose name is 'Alice'.
+ANS:-
+
+SELECT * FROM customers WHERE Name = 'ALICE PARMAR';
+                         
+                                                     ----------  *  ----------
+
+2 Orders Table :-
+-Fields
+-OrderID
+-CustomerID
+-OrderDate
+-TotalAmount
+
+CREATE TABLE orders(
+    Order_ID INT PRIMARY KEY,
+    Customer_Id INT,
+    OrderDate DATE,
+    TotalAmount DECIMAL(10,2)
+    );
+
+
+* Queries to Perform:-
+
+* ADD FOREIGN KEY :-
+
+ALTER TABLE orders
+ADD FOREIGN KEY(Customer_Id) REFERENCES
+customers(Customer_Id);
+
+2.1 Insert at least 5 sample orders into the Orders table.
+ANS:-
+
+INSERT INTO orders
+VALUES
+(101,2,'2026-02-01',10000),
+(102,2,'2026-02-02',11000),
+(103,3,'2026-02-03',12000),
+(104,4,'2026-02-04',13000),
+(105,5,'2026-02-05',14000);
+
+2.3 Retrieve all orders made by a specific customer.
+ANS:-
+
+SELECT * FROM orders WHERE Customer_ID = 2;
+
+2.4 Update an order's total amount.
+ANS:-
+
+UPDATE orders SET TotalAmount = 5000 WHERE Customer_Id = 3;
+
+2.5 Delete an order using its OrderID.
+ANS:-
+
+DELETE FROM orders WHERE Order_ID = 101; 
+
+2.6 Retrieve orders placed in the last 30 days.
+ANS:-
+
+SELECT * FROM orders WHERE OrderDate > 2025-12-30;
+
+2.7 Retrieve the highest, lowest, and average order amount using aggregate functions.
+ANS:-
+
+SELECT MIN(TotalAmount) FROM orders;
+SELECT MAX(TotalAmount) FROM orders;
+SELECT AVG(TotalAmount) FROM orders;
+
+                                                       ----------  *  -----------
+
+3 Products Table Fields:-
+-ProductID
+- ProductName
+- Price
+- Stock 
+
+CREATE TABLE product(
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(50),
+    Price DECIMAL(10,2),
+    Stock INT 
+    );
+
+* Queries to Perform:-
+
+3.1 Insert at least 5 sample products into the Products table.    
+ANS:-
+
+INSERT INTO product
+VALUES
+(1001,'MOUSE',5000,0),
+(1002,'CPU',300,10),
+(1003,'KEYBORD',500,15),
+(1004,'APPLE',100,10),
+(1005,'PHONE',50000,50);
+
+3.2 Retrieve all products sorted by price in descending order.
+ANS:-
+
+SELECT * FROM product order BY Price DESC;
+
+3.3 Update the price of a specific product.
+ANS:-
+
+UPDATE product
+SET Price = 100000
+WHERE ProductName = 'CPU';
+
+3.4 Delete a product if it's out of stock.
+ANS:-
+
+DELETE FROM product WHERE Stock = 0;
+
+3.5 Retrieve products whose price is between ₹500 and ₹2000.
+ANS:-
+
+SELECT * FROM product WHERE Price BETWEEN 500 AND 2000;
+
+3.6 Retrieve the most expensive and cheapest product using MAX() and MIN().
+ANS:-
+
+SELECT MAX(Price) FROM product;
+SELECT MIN(Price) FROM product;
+
+                                              ------------  *  ----------
+
+4 OrderDetails Table Fields:-
+- OrderDetailID
+- OrderID
+- ProductID
+- Quantity
+- SubTotal
+
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY,
+    OrderID INT,
+    ProductID INT,
+    Ouantity INT,
+    SubTotal DECIMAL(10,2)
+    );
+
+* Queries to Perform:-
+
+4.1 Insert at least 5 sample records into the OrderDetails table.
+ANS:-
+
+INSERT INTO orderdetails
+VALUES
+(10,102,1002,50,20000),
+(20,103,1002,60,30000),
+(30,104,1003,70,40000),
+(40,105,1004,80,50000),
+(50,102,1005,70,60000);
+ 
+4.2 Retrieve all order details for a specific order.
+ANS:-
+
+SELECT * FROM orderdetails WHERE OrderID = 103;
+
+4.3 Calculate the total revenue generated from all orders using SUM().
+ANS:-
+
+SELECT SUM(SubTotal) FROM orderdetails;
+
+4.4 Retrieve the top 3 most ordered products.
+ANS:-
+
+SELECT ProductID SUM(Ouantity) AS TotalQuntity
+FROM orderdetails
+GROUP BY ProductID
+ORDER BY TotalQuntity DESC
+LIMIT 3;
+
+4.5 Count how many times a specific product has been sold using COUNT().
+ANS:-
+
+SELECT COUNT(*) AS TimeSold
+FROM orderdetails
+WHERE ProductID = 2;
+
+                                                    ----------  *  ----------
