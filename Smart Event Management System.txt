@@ -1,0 +1,331 @@
+CREATE DATABASE Event_Menagement;
+1.
+CREATE TABLE events(
+    event_id INT PRIMARY KEY,
+    event_name VARCHAR(50),
+    event_date DATE,
+    venue_id INT,
+    organizer_id INT,
+    ticket_price DECIMAL(10,2),
+    total_seats INT,
+    FOREIGN KEY (venue_id) REFERENCES venues(venue_id),
+    FOREIGN KEY (organizer_id) REFERENCES organizers(organizer_id)
+    ); 
+
+INSERT INTO events (event_id, event_name, event_date, venue_id, organizer_id, ticket_price, total_seats)
+VALUES 
+(101, 'Tech Summit 2025', '2026-02-20', 1, 1, 499.00, 200),
+(102, 'Jazz in the Park', '2026-02-20', 2, 3, 25.50, 500),
+(103, 'Global Art Expo', '2026-02-10', 3, 2, 150.00, 150),
+(104, 'Code Workshop', '2026-02-27', 1, 1, 89.99, 50),
+(105, 'Startup Pitch Night', '2026-02
+-12', 4, 5, 0.00, 100);
+
+2.
+CREATE TABLE Venues(
+    venue_id INT PRIMARY KEY,
+    venue_name VARCHAR(50),
+    iocation VARCHAR(50),
+    capacity INT 
+    );
+INSERT INTO venues (venue_id, venue_name, location, capacity)
+VALUES
+    (1, 'Grand Hall', 'New York', 500),
+    (2, 'Convention Center', 'London', 2000),
+    (3, 'Stadium Arena', 'Tokyo', 50000),
+    (4, 'Club XYZ', 'Paris', 150),
+    (5, 'Community Theater', 'Sydney', 300);
+3.
+CREATE TABLE organizers(
+    organizer_id INT PRIMARY KEY,
+    organizer_name VARCHAR(50),
+    cantact_email VARCHAR(50),
+    phone_name INT 
+    );
+INSERT INTO organizers (organizer_id, organizer_name, cantact_email, phone_name)
+VALUES 
+(1, 'Elite Events', 'contact@eliteevents.com', 5550101),
+(2, 'Global Planners', 'info@globalplanners.net', 5550102),
+(3, 'Urban Gala', 'hello@urbangala.org', 5550103),
+(4, 'Summit Group', 'admin@summitgroup.io', 5550104),
+(5, 'Spark Solutions', 'support@sparksol.com', 5550105);
+    
+    
+4.
+CREATE TABLE attendees(
+    attendee_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    email VARCHAR(50),
+    phone_namber INT
+    );
+INSERT INTO attendees (attendee_id, name, email, phone_namber)
+VALUES 
+(1, 'Alice Johnson', 'alice.j@example.com', 5550191),
+(2, 'Bob Smith', 'bob.smith@provider.net', 5550192),
+(3, 'Charlie Davis', 'charlie.d@webmail.org', 5550193),
+(4, 'Diana Prince', 'diana.p@service.io', 5550194),
+(5, 'Edward Norton', 'ed.norton@mail.com', 5550195);
+
+5.
+CREATE TABLE tickets(
+    ticket_id INT PRIMARY KEY,
+    event_id INT,
+    attendee_id INT,
+    booking_date DATE,
+    status VARCHAR(50),
+    FOREIGN KEY (event_id) REFERENCES events(event_id),
+    FOREIGN KEY (attendee_id) REFERENCES attendees(attendee_id)
+    ); 
+INSERT INTO tickets (ticket_id, event_id, attendee_id, booking_date, status)
+VALUES 
+(501, 101, 1, '2025-01-10', 'Pending'),
+(502, 101, 2, '2025-01-12', 'Pending'),
+(503, 102, 3, '2025-02-15', 'Success'),
+(504, 103, 4, '2025-03-01', 'Success'),
+(505, 105, 5, '2025-03-05', 'Failed');
+
+6.
+CREATE TABLE payments(
+    payment_id INT PRIMARY KEY,
+    ticket_id INT,
+    amount_paid INT,
+    payment_status VARCHAR(50),
+    payment_date DATE,
+    FOREIGN KEY(ticket_id) REFERENCES tickets(ticket_id)
+    );
+    
+INSERT INTO payments (payment_id, ticket_id, amount_paid, payment_status, payment_date)
+VALUES 
+(9001, 501, 499, 'Success', '2025-01-10'),
+(9002, 502, 499, 'Pending', '2025-01-13'),
+(9003, 503, 25, 'Success', '2025-02-16'),
+(9004, 504, 0, 'Failed', '2025-03-05'),
+(9005, 505, 0, 'Success', '2025-03-05');
+    
+Q.1
+-
+INSERT INTO attendees 
+VALUES
+(6,'Meet','meetdodiya0811@gmail.com',5550196);
+
+-
+UPDATE attendees SET name = 'Jatin' WHERE attendee_id = 6;
+
+-
+DELETE FROM attendees WHERE attendee_id = 6;
+
+-
+SELECT * FROM attendees WHERE attendee_id = 1;
+
+Q.2
+SELECT *
+FROM events
+JOIN venues
+ON events.venue_id = venues.venue_id
+WHERE venues.iocation = 'New York'
+AND events.event_date >= CURDATE();
+
+-
+SELECT tickets.event_id,
+SUM(payments.amount_paid) AS revenue
+FROM payments
+JOIN tickets
+ON payments.ticket_id = tickets.ticket_id
+WHERE payments.payment_status = 'Success'
+GROUP BY tickets.event_id
+ORDER BY revenue DESC LIMIT 5;
+-
+SELECT * FROM tickets
+WHERE booking_date >= CURDATE() - INTERVAL 7 DAY;
+
+Q.3
+
+ALTER  TABLE events ADD COLUMN availble_seats INT;
+
+SELECT * FROM events
+WHERE MONTH(event_date)=12
+AND availble_seats > total_seats*0.5;
+
+-
+SELECT * FROM tickets
+WHERE status = 'Success'
+OR status = 'Pending';
+
+-
+SELECT * FROM events
+WHERE NOT availble_seats=0;
+
+Q.4
+SELECT * FROM `events`
+ORDER BY event_date ASC;
+
+-
+SELECT event_id ,
+COUNT(*)total_attendees
+FROM tickets
+GROUP BY event_id;
+
+-
+SELECT tickets.event_id,
+SUM(payments.amount_paid) AS revenue
+FROM payments
+JOIN tickets
+ON payments.ticket_id = tickets.ticket_id
+GROUP BY tickets.event_id;
+
+Q.5
+
+SELECT SUM(amount_paid) as total_revenue
+FROM payments;
+
+SELECT AVG(ticket_price) AS avg_price 
+FROM events;
+
+SELECT MAX(availble_seats) AS highest_number
+FROM events;
+
+Q.6
+
+
+
+Q.7
+
+SELECT events.event_name , venues.venue_name
+FROM events
+INNER JOIN venues
+ON events.venue_id = venues.venue_id;
+    
+SELECT attendees.name,tickets.status
+FROM attendees
+LEFT JOIN tickets
+ON attendees.attendee_id = tickets.attendee_id;
+
+SELECT events.event_name ,tickets.ticket_id
+FROM events
+RIGHT JOIN tickets
+ON events.event_id = tickets.event_id;
+
+SELECT attendees.name , tickets.ticket_id
+FROM attendees
+LEFT JOIN tickets
+ON attendees.attendee_id = tickets.attendee_id
+
+UNION
+
+SELECT attendees.name , tickets.ticket_id
+FROM attendees
+RIGHT JOIN tickets
+ON attendees.attendee_id = tickets.attendee_id;
+
+Q.8
+
+SELECT e.event_id, e.event_name,
+       SUM(t.ticket_id) AS total_revenue
+FROM events e
+JOIN tickets t 
+ON e.event_id = t.event_id
+GROUP BY e.event_id, e.event_name
+HAVING total_revenue > (
+    SELECT AVG(ticket_id)
+    FROM tickets
+);
+
+-
+SELECT a.attendee_id, a.name,
+       COUNT(DISTINCT t.event_id) AS event_count
+FROM attendees a
+JOIN tickets t ON a.attendee_id = t.attendee_id
+GROUP BY a.attendee_id, a.name
+HAVING event_count > 1;
+
+-
+SELECT o.organizer_id, o.organizer_name,
+       COUNT(e.event_id) AS total_events
+FROM organizers o
+JOIN events e ON o.organizer_id = e.organizer_i3
+d
+GROUP BY o.organizer_id, o.organizer_name
+HAVING total_events > 3;
+
+Q.9
+
+SELECT event_id, event_name,
+       MONTH(event_date) AS event_month
+FROM events;
+
+-
+SELECT event_id, event_name,
+       DATEDIFF(event_date, CURDATE()) AS days_remaining
+FROM events
+WHERE event_date >= CURDATE();
+
+-
+SELECT payment_id,
+       DATE_FORMAT(payment_date, '%Y-%m-%d %H:%i:%s') AS formatted_date
+FROM payments;
+
+Q.10
+
+SELECT organizer_id,
+       UPPER(organizer_name) AS organizer_name_upper
+FROM organizers;
+
+-
+SELECT attendee_id,
+       TRIM(name) AS cleaned_name
+FROM attendees;
+
+-
+SELECT attendee_id,
+       IFNULL(email, 'Not Provided') AS email_status
+FROM attendees;
+
+Q.11
+SELECT e.event_id, e.event_name,
+       SUM(t.ticket_id) AS total_revenue,
+       RANK() OVER (ORDER BY SUM(t.ticket_id) DESC) AS revenue_rank
+FROM events e
+JOIN tickets t ON e.event_id = t.event_id
+GROUP BY e.event_id, e.event_name;
+
+-
+SELECT event_id,
+       SUM(ticket_id) AS total_sales,
+       SUM(SUM(ticket_id)) OVER (ORDER BY event_id) AS cumulative_sales
+FROM tickets
+GROUP BY event_id;
+
+-
+SELECT event_id,
+       attendee_id,
+       COUNT(attendee_id) OVER (PARTITION BY event_id
+                                ORDER BY attendee_id) AS running_total
+FROM tickets;
+
+Q.12
+SELECT event_id,
+       event_name,
+       total_seats,
+       availble_seats,
+       CASE
+           WHEN availble_seats < (0.2 * total_seats)
+                THEN 'High Demand'
+           WHEN availble_seats BETWEEN (0.2 * total_seats)
+                                   AND (0.5 * total_seats)
+                THEN 'Moderate Demand'
+           ELSE 'Low Demand'
+       END AS demand_status
+FROM events;
+
+-
+SELECT payment_id,
+       payment_status,
+       CASE
+           WHEN payment_status = 'Success'
+                THEN 'Successful'
+           WHEN payment_status = 'Failed'
+                THEN 'Failed'
+           ELSE 'Pending'
+       END AS status_category
+FROM payments;
+
